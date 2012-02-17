@@ -11,7 +11,7 @@
     width: 504px;
 }
 </style>
-<div id="content">
+<div id="ands-register-content">
     <h2>
         Register your experiment with ANDS
     </h2>
@@ -115,7 +115,7 @@
         var href = $form.attr('action');
 
         // TODO error handling
-        var $content = $('#content');
+        var $content = $('#ands-register-content');
         $content.text('now loading...');
         $.post(href, $form.serialize(), function(data, textStatus, jqXHR){
             if (data.success) {
