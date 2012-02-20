@@ -1,5 +1,5 @@
 from tardis.tardis_portal.models import ExperimentParameterSet, Experiment, \
-                                            ExperimentParameter
+                                            ExperimentParameter, Schema
 from tardis.tardis_portal.ParameterSetManager import ParameterSetManager
 
 import logging
@@ -22,6 +22,14 @@ class PublishHandler(object):
     def __init__(self, experiment_id, create=False):
         self.experiment_id = experiment_id
         self.psm = self._get_or_create_publish_parameterset(create)
+        self._import_schema_if_necessary()
+
+    def _import_schema_if_necessary(self):
+        try:
+            Schema.objects.get(namespace=self.schema)
+        except Schema.DoesNotExist:
+            from django.core.management import call_command
+            call_command('loaddata', 'ands_register_schema')
 
     def _get_or_create_publish_parameterset(self, create):
         parameterset = ExperimentParameterSet.objects.filter(
@@ -63,7 +71,7 @@ class PublishHandler(object):
         return [a.string_value for a in author_params]
 
     def form_data(self):
-        ''' 
+        '''
         Use this method if you DO NOT want the custom description text area
         to be populated with the experiment description when no custom
         description is available.
@@ -81,7 +89,7 @@ class PublishHandler(object):
         data[self.access_type_key] = self.access_type()
 
         return data
-    
+
     def form_data_with_abstract(self):
         '''
         Use this method if you DO want the custom description text area
